@@ -1,4 +1,3 @@
-"}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +36,7 @@ z-index:-1;
 header{
 background:#54c9ff;
 padding:25px;
-font-size:40px;
+font-size:36px;
 font-weight:bold;
 box-shadow:0 5px 12px rgba(0,0,0,.2);
 }
@@ -80,29 +79,27 @@ padding:20px;
 border-radius:15px;
 width:220px;
 box-shadow:0 6px 16px rgba(0,0,0,.2);
-transition:.2s;
-}
-
-.card:hover{
-transform:scale(1.05);
 }
 
 button{
-padding:12px 20px;
+padding:10px 18px;
 border:none;
-border-radius:10px;
+border-radius:8px;
 background:#6dd5ff;
-font-size:16px;
+font-size:14px;
 cursor:pointer;
+margin:4px;
 }
 
 button:hover{
 background:#42bde8;
 }
 
+/ vote bars /
+
 .bar{
 background:#ddd;
-height:20px;
+height:18px;
 border-radius:10px;
 margin:10px auto;
 width:60%;
@@ -116,13 +113,13 @@ background:#4dc7ff;
 transition:width .6s;
 }
 
-/ HP bars */
+/ hp bars /
 
 .hpbar{
 background:#ddd;
 width:120px;
 height:10px;
-border-radius:5px;
+border-radius:6px;
 margin:auto;
 }
 
@@ -130,7 +127,7 @@ margin:auto;
 background:#4CAF50;
 height:10px;
 width:100%;
-border-radius:5px;
+border-radius:6px;
 transition:width .3s;
 }
 
@@ -139,6 +136,8 @@ margin-top:15px;
 font-weight:bold;
 }
 
+/ secret wooper /
+
 #clicker{
 position:fixed;
 bottom:20px;
@@ -146,11 +145,13 @@ right:20px;
 cursor:pointer;
 }
 
+/ swimming wooper */
+
 #wooperSwim{
 position:fixed;
 left:-120px;
 bottom:80px;
-width:90px;
+width:80px;
 z-index:9999;
 pointer-events:none;
 }
@@ -265,15 +266,15 @@ function loadPokemon(){
 fetch("https://pokeapi.co/api/v2/pokemon/"+id1)
 .then(r=>r.json())
 .then(d=>{
-name1.innerText=d.name
-img1.src=d.sprites.front_default
+document.getElementById("name1").innerText=d.name
+document.getElementById("img1").src=d.sprites.front_default
 })
 
 fetch("https://pokeapi.co/api/v2/pokemon/"+id2)
 .then(r=>r.json())
 .then(d=>{
-name2.innerText=d.name
-img2.src=d.sprites.front_default
+document.getElementById("name2").innerText=d.name
+document.getElementById("img2").src=d.sprites.front_default
 })
 
 updateBars()
@@ -297,13 +298,16 @@ updateBars()
 function updateBars(){
 
 let t=v1+v2
-let p1=t?(v1/t)*100:0
-let p2=t?(v2/t)*100:0
 
-bar1.style.width=p1+"%"
-bar2.style.width=p2+"%"
+let p1=t?(v1/t)*100:0
+let p2=t?(v2/t)100:0
+
+document.getElementById("bar1").style.width=p1+"%"
+document.getElementById("bar2").style.width=p2+"%"
 
 }
+
+/ battle system */
 
 function battleTurn(){
 
@@ -316,7 +320,9 @@ if(hpB<0)hpB=0
 
 document.getElementById("hp2").style.width=hpB+"%"
 
-log.innerText=name1.innerText+" attacks! -"+dmg+" HP"
+log.innerText=document.getElementById("name1").innerText+" attacks! -"+dmg+" HP"
+
+let img1=document.getElementById("img1")
 
 img1.style.transform="translateX(40px)"
 
@@ -325,20 +331,22 @@ img1.style.transform="translateX(0)"
 },300)
 
 if(hpB<=0){
-log.innerText=name1.innerText+" wins!"
+log.innerText=document.getElementById("name1").innerText+" wins!"
 return
 }
 
 setTimeout(()=>{
 
-let dmg2=Math.floor(Math.random()*20)+5
+let dmg2=Math.floor(Math.random()20)+5
 
 hpA-=dmg2
 if(hpA<0)hpA=0
 
 document.getElementById("hp1").style.width=hpA+"%"
 
-log.innerText=name2.innerText+" strikes back! -"+dmg2+" HP"
+log.innerText=document.getElementById("name2").innerText+" strikes back! -"+dmg2+" HP"
+
+let img2=document.getElementById("img2")
 
 img2.style.transform="translateX(-40px) scaleX(-1)"
 
@@ -347,29 +355,34 @@ img2.style.transform="translateX(0) scaleX(-1)"
 },300)
 
 if(hpA<=0){
-log.innerText=name2.innerText+" wins!"
+log.innerText=document.getElementById("name2").innerText+" wins!"
 }
 
 },900)
 
 }
 
+/ news ticker */
+
 let newsLines=[
 "BREAKING: Wooper defeats Mewtwo in public vote.",
 "Scientists discover Wooper may be perfect life form.",
-"Robs Beedrill got owned at last night battle.",
+"Wooper population increases 900%.",
 "Wooper fans declare global holiday.",
-"Breaking: Magikarp jealous of Wooper popularity."
+"Magikarp jealous of Wooper popularity."
 ]
 
-newsText.innerText=newsLines[Math.floor(Math.random()newsLines.length)]
+document.getElementById("newsText").innerText=
+newsLines[Math.floor(Math.random()newsLines.length)]
 
-clicker.onclick=()=>{
+/ secret wooper /
+
+document.getElementById("clicker").onclick=()=>{
 coins++
 alert("You found the secret Wooper! Coins: "+coins)
 }
 
-/ Wooper swimmer */
+/ swimming wooper */
 
 const wooper=document.getElementById("wooperSwim")
 
@@ -377,7 +390,7 @@ let pos=-120
 
 function swim(){
 
-pos+=3
+pos+=2
 
 wooper.style.left=pos+"px"
 
