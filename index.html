@@ -1,3 +1,4 @@
+"}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,7 +42,7 @@ font-weight:bold;
 box-shadow:0 5px 12px rgba(0,0,0,.2);
 }
 
-/ news ticker */
+/ news ticker /
 
 #news{
 background:#003344;
@@ -69,7 +70,7 @@ padding:40px 20px;
 .battle{
 display:flex;
 justify-content:center;
-gap:60px;
+gap:120px;
 flex-wrap:wrap;
 }
 
@@ -101,7 +102,7 @@ background:#42bde8;
 
 .bar{
 background:#ddd;
-height:28px;
+height:20px;
 border-radius:10px;
 margin:10px auto;
 width:60%;
@@ -115,11 +116,43 @@ background:#4dc7ff;
 transition:width .6s;
 }
 
+/ HP bars */
+
+.hpbar{
+background:#ddd;
+width:120px;
+height:10px;
+border-radius:5px;
+margin:auto;
+}
+
+.hp{
+background:#4CAF50;
+height:10px;
+width:100%;
+border-radius:5px;
+transition:width .3s;
+}
+
+#battleLog{
+margin-top:15px;
+font-weight:bold;
+}
+
 #clicker{
 position:fixed;
 bottom:20px;
 right:20px;
 cursor:pointer;
+}
+
+#wooperSwim{
+position:fixed;
+left:-120px;
+bottom:80px;
+width:90px;
+z-index:9999;
+pointer-events:none;
 }
 
 </style>
@@ -143,26 +176,51 @@ cursor:pointer;
 
 <div class="card">
 <h3 id="name1"></h3>
+
+<div class="hpbar">
+<div id="hp1" class="hp"></div>
+</div>
+
 <img id="img1" width="120">
+
 <br><br>
+
+<button onclick="battleTurn()">⚔ Attack</button>
 <button onclick="vote(1)">Vote</button>
+
 </div>
 
 <div class="card">
 <h3 id="name2"></h3>
-<img id="img2" width="120">
+
+<div class="hpbar">
+<div id="hp2" class="hp"></div>
+</div>
+
+<img id="img2" width="120" style="transform:scaleX(-1)">
+
 <br><br>
+
+<button onclick="battleTurn()">⚔ Attack</button>
 <button onclick="vote(2)">Vote</button>
+
 </div>
 
 </div>
+
+<p id="battleLog"></p>
 
 <div class="bar"><div id="bar1" class="fill"></div></div>
 <div class="bar"><div id="bar2" class="fill"></div></div>
 
 </div>
 
-<img id="clicker" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/194.png" width="70">
+<img id="clicker"
+src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/194.png"
+width="70">
+
+<img id="wooperSwim"
+src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/194.png">
 
 <script>
 
@@ -170,6 +228,9 @@ let id1,id2
 let v1=0
 let v2=0
 let coins=0
+
+let hpA=100
+let hpB=100
 
 function rand(){
 return Math.floor(Math.random()*400)+1
@@ -244,39 +305,84 @@ bar2.style.width=p2+"%"
 
 }
 
+function battleTurn(){
+
+let log=document.getElementById("battleLog")
+
+let dmg=Math.floor(Math.random()*20)+5
+
+hpB-=dmg
+if(hpB<0)hpB=0
+
+document.getElementById("hp2").style.width=hpB+"%"
+
+log.innerText=name1.innerText+" attacks! -"+dmg+" HP"
+
+img1.style.transform="translateX(40px)"
+
+setTimeout(()=>{
+img1.style.transform="translateX(0)"
+},300)
+
+if(hpB<=0){
+log.innerText=name1.innerText+" wins!"
+return
+}
+
+setTimeout(()=>{
+
+let dmg2=Math.floor(Math.random()*20)+5
+
+hpA-=dmg2
+if(hpA<0)hpA=0
+
+document.getElementById("hp1").style.width=hpA+"%"
+
+log.innerText=name2.innerText+" strikes back! -"+dmg2+" HP"
+
+img2.style.transform="translateX(-40px) scaleX(-1)"
+
+setTimeout(()=>{
+img2.style.transform="translateX(0) scaleX(-1)"
+},300)
+
+if(hpA<=0){
+log.innerText=name2.innerText+" wins!"
+}
+
+},900)
+
+}
+
 let newsLines=[
 "BREAKING: Wooper defeats Mewtwo in public vote.",
 "Scientists discover Wooper may be perfect life form.",
-"Wooper population increases 900%.",
+"Robs Beedrill got owned at last night battle.",
 "Wooper fans declare global holiday.",
 "Breaking: Magikarp jealous of Wooper popularity."
 ]
 
-newsText.innerText=newsLines[Math.floor(Math.random()*newsLines.length)]
+newsText.innerText=newsLines[Math.floor(Math.random()newsLines.length)]
 
 clicker.onclick=()=>{
 coins++
 alert("You found the secret Wooper! Coins: "+coins)
 }
 
-battle()
+/ Wooper swimmer */
 
-</script>
-8462"}
-<script>
+const wooper=document.getElementById("wooperSwim")
 
-const wooper = document.getElementById("wooperSwim")
-
-let pos = -120
+let pos=-120
 
 function swim(){
 
-pos += 3
+pos+=3
 
-wooper.style.left = pos + "px"
+wooper.style.left=pos+"px"
 
-if(pos > window.innerWidth){
-pos = -120
+if(pos>window.innerWidth){
+pos=-120
 }
 
 requestAnimationFrame(swim)
@@ -285,7 +391,6 @@ requestAnimationFrame(swim)
 
 swim()
 
-// steal cursor
 setInterval(()=>{
 
 document.body.style.cursor="none"
@@ -296,6 +401,9 @@ document.body.style.cursor="default"
 
 },15000)
 
-</s
+battle()
+
+</script>
+
 </body>
 </html>
