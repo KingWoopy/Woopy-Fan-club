@@ -262,6 +262,40 @@ alert("You found the secret Wooper! Coins: "+coins)
 battle()
 
 </script>
+8462"}
+<script>
 
+const wooper = document.getElementById("wooperSwim")
+
+let pos = -120
+
+function swim(){
+
+pos += 3
+
+wooper.style.left = pos + "px"
+
+if(pos > window.innerWidth){
+pos = -120
+}
+
+requestAnimationFrame(swim)
+
+}
+
+swim()
+
+// steal cursor
+setInterval(()=>{
+
+document.body.style.cursor="none"
+
+setTimeout(()=>{
+document.body.style.cursor="default"
+},2000)
+
+},15000)
+
+</s
 </body>
 </html>
