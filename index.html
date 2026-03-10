@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wooper Fan Club ULTRA</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(#6dd5ff,#baf3ff);
+text-align:center;
+color:#003344;
+overflow-x:hidden;
+}
+
+/* floating bubbles /
+
+body::before{
+content:"";
+position:fixed;
+width:200%;
+height:200%;
+background-image:radial-gradient(circle, rgba(255,255,255,.7) 2px, transparent 2px);
+background-size:60px 60px;
+animation:bubbles 40s linear infinite;
+z-index:-1;
+}
+
+@keyframes bubbles{
+0%{transform:translateY(0);}
+100%{transform:translateY(-600px);}
+}
+
+header{
+background:#54c9ff;
+padding:25px;
+font-size:40px;
+font-weight:bold;
+box-shadow:0 5px 12px rgba(0,0,0,.2);
+}
+
+/ news ticker */
+
+#news{
+background:#003344;
+color:white;
+padding:10px;
+overflow:hidden;
+white-space:nowrap;
+}
+
+#news span{
+display:inline-block;
+padding-left:100%;
+animation:ticker 15s linear infinite;
+}
+
+@keyframes ticker{
+0%{transform:translateX(0)}
+100%{transform:translateX(-100%)}
+}
+
+.section{
+padding:40px 20px;
+}
+
+.battle{
+display:flex;
+justify-content:center;
+gap:60px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+width:220px;
+box-shadow:0 6px 16px rgba(0,0,0,.2);
+transition:.2s;
+}
+
+.card:hover{
+transform:scale(1.05);
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+background:#6dd5ff;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#42bde8;
+}
+
+.bar{
+background:#ddd;
+height:28px;
+border-radius:10px;
+margin:10px auto;
+width:60%;
+overflow:hidden;
+}
+
+.fill{
+height:100%;
+width:0%;
+background:#4dc7ff;
+transition:width .6s;
+}
+
+#clicker{
+position:fixed;
+bottom:20px;
+right:20px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+🐸 WOOPER FAN CLUB ULTRA 🐸
+</header>
+
+<div id="news">
+<span id="newsText"></span>
+</div>
+
+<div class="section">
+
+<h2>⚔ Daily Pokémon Battle</h2>
+
+<div class="battle">
+
+<div class="card">
+<h3 id="name1"></h3>
+<img id="img1" width="120">
+<br><br>
+<button onclick="vote(1)">Vote</button>
+</div>
+
+<div class="card">
+<h3 id="name2"></h3>
+<img id="img2" width="120">
+<br><br>
+<button onclick="vote(2)">Vote</button>
+</div>
+
+</div>
+
+<div class="bar"><div id="bar1" class="fill"></div></div>
+<div class="bar"><div id="bar2" class="fill"></div></div>
+
+</div>
+
+<img id="clicker" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/194.png" width="70">
+
+<script>
+
+let id1,id2
+let v1=0
+let v2=0
+let coins=0
+
+function rand(){
+return Math.floor(Math.random()*400)+1
+}
+
+function battle(){
+
+id1=localStorage.getItem("id1")
+id2=localStorage.getItem("id2")
+
+if(!id1){
+
+id1=rand()
+id2=rand()
+
+localStorage.setItem("id1",id1)
+localStorage.setItem("id2",id2)
+localStorage.setItem("v1",0)
+localStorage.setItem("v2",0)
+
+}
+
+v1=Number(localStorage.getItem("v1"))
+v2=Number(localStorage.getItem("v2"))
+
+loadPokemon()
+
+}
+
+function loadPokemon(){
+
+fetch("https://pokeapi.co/api/v2/pokemon/"+id1)
+.then(r=>r.json())
+.then(d=>{
+name1.innerText=d.name
+img1.src=d.sprites.front_default
+})
+
+fetch("https://pokeapi.co/api/v2/pokemon/"+id2)
+.then(r=>r.json())
+.then(d=>{
+name2.innerText=d.name
+img2.src=d.sprites.front_default
+})
+
+updateBars()
+
+}
+
+function vote(n){
+
+if(n==1){
+v1++
+localStorage.setItem("v1",v1)
+}else{
+v2++
+localStorage.setItem("v2",v2)
+}
+
+updateBars()
+
+}
+
+function updateBars(){
+
+let t=v1+v2
+let p1=t?(v1/t)*100:0
+let p2=t?(v2/t)*100:0
+
+bar1.style.width=p1+"%"
+bar2.style.width=p2+"%"
+
+}
+
+let newsLines=[
+"BREAKING: Wooper defeats Mewtwo in public vote.",
+"Scientists discover Wooper may be perfect life form.",
+"Wooper population increases 900%.",
+"Wooper fans declare global holiday.",
+"Breaking: Magikarp jealous of Wooper popularity."
+]
+
+newsText.innerText=newsLines[Math.floor(Math.random()*newsLines.length)]
+
+clicker.onclick=()=>{
+coins++
+alert("You found the secret Wooper! Coins: "+coins)
+}
+
+battle()
+
+</script>
+
+</body>
+</html>
