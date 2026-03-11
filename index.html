@@ -1,126 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Wooper Fan Club ULTRA</title>
+<title>Wooper Fan Club</title>
 
 <style>
 
 body{
-margin:0;
 font-family:Arial;
-background:linear-gradient(#6dd5ff,#baf3ff);
+margin:0;
 text-align:center;
-color:#003344;
-overflow-x:hidden;
-}
-
-/* floating bubbles /
-
-body::before{
-content:"";
-position:fixed;
-width:200%;
-height:200%;
-background-image:radial-gradient(circle, rgba(255,255,255,.7) 2px, transparent 2px);
-background-size:60px 60px;
-animation:bubbles 40s linear infinite;
-z-index:-1;
-}
-
-@keyframes bubbles{
-0%{transform:translateY(0);}
-100%{transform:translateY(-600px);}
+background:linear-gradient(#6dd5ff,#baf3ff);
 }
 
 header{
 background:#54c9ff;
 padding:25px;
-font-size:36px;
+font-size:32px;
 font-weight:bold;
-box-shadow:0 5px 12px rgba(0,0,0,.2);
-}
-
-/ news ticker /
-
-#news{
-background:#003344;
-color:white;
-padding:10px;
-overflow:hidden;
-white-space:nowrap;
-}
-
-#news span{
-display:inline-block;
-padding-left:100%;
-animation:ticker 15s linear infinite;
-}
-
-@keyframes ticker{
-0%{transform:translateX(0)}
-100%{transform:translateX(-100%)}
-}
-
-.section{
-padding:40px 20px;
-}
-
-.battle{
-display:flex;
-justify-content:center;
-gap:120px;
-flex-wrap:wrap;
 }
 
 .card{
 background:white;
 padding:20px;
-border-radius:15px;
-width:220px;
-box-shadow:0 6px 16px rgba(0,0,0,.2);
+border-radius:10px;
+width:200px;
+margin:20px auto;
+box-shadow:0 4px 10px rgba(0,0,0,.2);
 }
 
 button{
-padding:10px 18px;
+padding:10px 16px;
 border:none;
 border-radius:8px;
 background:#6dd5ff;
-font-size:14px;
 cursor:pointer;
-margin:4px;
 }
-
-button:hover{
-background:#42bde8;
-}
-
-/ vote bars /
-
-.bar{
-background:#ddd;
-height:18px;
-border-radius:10px;
-margin:10px auto;
-width:60%;
-overflow:hidden;
-}
-
-.fill{
-height:100%;
-width:0%;
-background:#4dc7ff;
-transition:width .6s;
-}
-
-/ hp bars /
 
 .hpbar{
 background:#ddd;
 width:120px;
 height:10px;
-border-radius:6px;
 margin:auto;
+border-radius:6px;
 }
 
 .hp{
@@ -128,32 +50,13 @@ background:#4CAF50;
 height:10px;
 width:100%;
 border-radius:6px;
-transition:width .3s;
 }
-
-#battleLog{
-margin-top:15px;
-font-weight:bold;
-}
-
-/ secret wooper /
-
-#clicker{
-position:fixed;
-bottom:20px;
-right:20px;
-cursor:pointer;
-}
-
-/ swimming wooper */
 
 #wooperSwim{
 position:fixed;
-left:-120px;
-bottom:80px;
-width:80px;
-z-index:9999;
-pointer-events:none;
+bottom:60px;
+left:-100px;
+width:70px;
 }
 
 </style>
@@ -161,19 +64,9 @@ pointer-events:none;
 
 <body>
 
-<header>
-🐸 WOOPER FAN CLUB ULTRA 🐸
-</header>
+<header>🐸 WOOPER FAN CLUB 🐸</header>
 
-<div id="news">
-<span id="newsText"></span>
-</div>
-
-<div class="section">
-
-<h2>⚔ Daily Pokémon Battle</h2>
-
-<div class="battle">
+<h2>Daily Pokémon Battle</h2>
 
 <div class="card">
 <h3 id="name1"></h3>
@@ -186,8 +79,7 @@ pointer-events:none;
 
 <br><br>
 
-<button onclick="battleTurn()">⚔ Attack</button>
-<button onclick="vote(1)">Vote</button>
+<button onclick="attack()">Attack</button>
 
 </div>
 
@@ -198,120 +90,49 @@ pointer-events:none;
 <div id="hp2" class="hp"></div>
 </div>
 
-<img id="img2" width="120" style="transform:scaleX(-1)">
-
-<br><br>
-
-<button onclick="battleTurn()">⚔ Attack</button>
-<button onclick="vote(2)">Vote</button>
+<img id="img2" width="120">
 
 </div>
 
-</div>
-
-<p id="battleLog"></p>
-
-<div class="bar"><div id="bar1" class="fill"></div></div>
-<div class="bar"><div id="bar2" class="fill"></div></div>
-
-</div>
-
-<img id="clicker"
-src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/194.png"
-width="70">
+<p id="log"></p>
 
 <img id="wooperSwim"
 src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/194.png">
 
 <script>
 
-let id1,id2
-let v1=0
-let v2=0
-let coins=0
-
 let hpA=100
 let hpB=100
 
-function rand(){
-return Math.floor(Math.random()*400)+1
-}
+let p1
+let p2
 
-function battle(){
-
-id1=localStorage.getItem("id1")
-id2=localStorage.getItem("id2")
-
-if(!id1){
-
-id1=rand()
-id2=rand()
-
-localStorage.setItem("id1",id1)
-localStorage.setItem("id2",id2)
-localStorage.setItem("v1",0)
-localStorage.setItem("v2",0)
-
-}
-
-v1=Number(localStorage.getItem("v1"))
-v2=Number(localStorage.getItem("v2"))
-
-loadPokemon()
-
+function randomPokemon(){
+return Math.floor(Math.random()*151)+1
 }
 
 function loadPokemon(){
 
-fetch("https://pokeapi.co/api/v2/pokemon/"+id1)
+p1=randomPokemon()
+p2=randomPokemon()
+
+fetch("https://pokeapi.co/api/v2/pokemon/"+p1)
 .then(r=>r.json())
 .then(d=>{
 document.getElementById("name1").innerText=d.name
 document.getElementById("img1").src=d.sprites.front_default
 })
 
-fetch("https://pokeapi.co/api/v2/pokemon/"+id2)
+fetch("https://pokeapi.co/api/v2/pokemon/"+p2)
 .then(r=>r.json())
 .then(d=>{
 document.getElementById("name2").innerText=d.name
 document.getElementById("img2").src=d.sprites.front_default
 })
 
-updateBars()
-
 }
 
-function vote(n){
-
-if(n==1){
-v1++
-localStorage.setItem("v1",v1)
-}else{
-v2++
-localStorage.setItem("v2",v2)
-}
-
-updateBars()
-
-}
-
-function updateBars(){
-
-let t=v1+v2
-
-let p1=t?(v1/t)*100:0
-let p2=t?(v2/t)100:0
-
-document.getElementById("bar1").style.width=p1+"%"
-document.getElementById("bar2").style.width=p2+"%"
-
-}
-
-/ battle system */
-
-function battleTurn(){
-
-let log=document.getElementById("battleLog")
+function attack(){
 
 let dmg=Math.floor(Math.random()*20)+5
 
@@ -320,82 +141,23 @@ if(hpB<0)hpB=0
 
 document.getElementById("hp2").style.width=hpB+"%"
 
-log.innerText=document.getElementById("name1").innerText+" attacks! -"+dmg+" HP"
-
-let img1=document.getElementById("img1")
-
-img1.style.transform="translateX(40px)"
-
-setTimeout(()=>{
-img1.style.transform="translateX(0)"
-},300)
-
-if(hpB<=0){
-log.innerText=document.getElementById("name1").innerText+" wins!"
-return
-}
-
-setTimeout(()=>{
-
-let dmg2=Math.floor(Math.random()20)+5
-
-hpA-=dmg2
-if(hpA<0)hpA=0
-
-document.getElementById("hp1").style.width=hpA+"%"
-
-log.innerText=document.getElementById("name2").innerText+" strikes back! -"+dmg2+" HP"
-
-let img2=document.getElementById("img2")
-
-img2.style.transform="translateX(-40px) scaleX(-1)"
-
-setTimeout(()=>{
-img2.style.transform="translateX(0) scaleX(-1)"
-},300)
-
-if(hpA<=0){
-log.innerText=document.getElementById("name2").innerText+" wins!"
-}
-
-},900)
+document.getElementById("log").innerText=
+document.getElementById("name1").innerText+" attacks for "+dmg
 
 }
 
-/ news ticker */
+loadPokemon()
 
-let newsLines=[
-"BREAKING: Wooper defeats Mewtwo in public vote.",
-"Scientists discover Wooper may be perfect life form.",
-"Wooper population increases 900%.",
-"Wooper fans declare global holiday.",
-"Magikarp jealous of Wooper popularity."
-]
-
-document.getElementById("newsText").innerText=
-newsLines[Math.floor(Math.random()newsLines.length)]
-
-/ secret wooper /
-
-document.getElementById("clicker").onclick=()=>{
-coins++
-alert("You found the secret Wooper! Coins: "+coins)
-}
-
-/ swimming wooper */
-
-const wooper=document.getElementById("wooperSwim")
-
-let pos=-120
+let pos=-100
 
 function swim(){
 
 pos+=2
 
-wooper.style.left=pos+"px"
+document.getElementById("wooperSwim").style.left=pos+"px"
 
 if(pos>window.innerWidth){
-pos=-120
+pos=-100
 }
 
 requestAnimationFrame(swim)
@@ -403,18 +165,6 @@ requestAnimationFrame(swim)
 }
 
 swim()
-
-setInterval(()=>{
-
-document.body.style.cursor="none"
-
-setTimeout(()=>{
-document.body.style.cursor="default"
-},2000)
-
-},15000)
-
-battle()
 
 </script>
 
